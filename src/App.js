@@ -39,7 +39,7 @@ function Nav(props) {
           href={"/read/" + t.id}
           onClick={(event) => {
             event.preventDefault();
-            props.onChangeMode(event.target.id);
+            props.onChangeMode(Number(event.target.id));
           }}
         >
           {t.title}
@@ -61,19 +61,39 @@ function App() {
     { id: 3, title: "javascript", body: "javascript is ..." },
   ];
 
-  const [mode, setMode] = useState("null");
+  const [mode, setMode] = useState("welcome");
+  const [id, setId] = useState(null);
 
   let content = null;
+
+  // header 클릭했을 때
   if (mode === "web") {
     content = <Article title="hello" content="web!"></Article>;
-  } else if (mode === "read") {
-    content = <Article title="hello" content="read!"></Article>;
+  }
+  // Nav 클릭했을 때
+  else if (mode === "read") {
+    let title,
+      body = null;
+    for (let i = 0; i < topics.length; i++) {
+      if (topics[i].id === id) {
+        title = topics[i].title;
+        body = topics[i].body;
+      }
+    }
+
+    content = <Article title={title} content={body}></Article>;
   }
 
   return (
     <div>
       <Header onChangeMode={() => setMode("web")}></Header>
-      <Nav topics={topics} onChangeMode={() => setMode("read")}></Nav>
+      <Nav
+        topics={topics}
+        onChangeMode={(_id) => {
+          setMode("read");
+          setId(_id);
+        }}
+      ></Nav>
       {content}
     </div>
   );
