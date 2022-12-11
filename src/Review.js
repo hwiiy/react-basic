@@ -126,7 +126,7 @@ function App() {
           const newTopics = [...foods];
           newTopics.push(newTopic);
           setFoods(newTopics);
-          setMode("READ");
+          setMode("link");
           setId(nextId);
           setNextId(nextId + 1);
         }}
