@@ -131,7 +131,7 @@ function App() {
   const [mode, setMode] = useState("menu");
   const [id, setId] = useState(null);
   let content = null;
-  let updateTag = null;
+  let contextControl = null;
 
   const [nextId, setNextId] = useState(4);
   const [foods, setFoods] = useState([
@@ -164,18 +164,36 @@ function App() {
       }
     }
     content = <Content title={title} body={body} />;
-    updateTag = (
-      <li>
-        <a
-          href="/update"
-          onClick={(event) => {
-            event.preventDefault();
-            setMode("UPDATE");
-          }}
-        >
-          update
-        </a>
-      </li>
+    contextControl = (
+      <>
+        <li>
+          <a
+            href="/update"
+            onClick={(event) => {
+              event.preventDefault();
+              setMode("UPDATE");
+            }}
+          >
+            update
+          </a>
+        </li>
+        <li>
+          <input
+            type="button"
+            value="Delete"
+            onClick={() => {
+              const newFoods = [];
+              for (let i = 0; i < foods.length; i++) {
+                if (foods[i].id !== id) {
+                  newFoods.push(foods[i]);
+                }
+              }
+              setFoods(newFoods);
+              setMode("menu");
+            }}
+          />
+        </li>
+      </>
     );
   } else if (mode === "CREATE") {
     content = (
@@ -249,7 +267,7 @@ function App() {
           </a>
         </li>
 
-        {updateTag}
+        {contextControl}
       </ul>
     </div>
   );
