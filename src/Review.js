@@ -56,6 +56,7 @@ function Links(props) {
 
   return <ul className={classes.content}>{li}</ul>;
 }
+
 function Create(props) {
   return (
     <article>
@@ -82,10 +83,55 @@ function Create(props) {
   );
 }
 
+function Update(props) {
+  const [title, setTitle] = useState(props.title);
+  const [body, setBody] = useState(props.body);
+
+  return (
+    <article>
+      <h2>Update</h2>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          const title = event.target.title.value;
+          const body = event.target.body.value;
+          props.onUpdate(title, body);
+        }}
+      >
+        <p>
+          <input
+            type="text"
+            name="title"
+            placeholder="title"
+            value={title}
+            onChange={(event) => {
+              setTitle(event.target.value);
+            }}
+          />
+        </p>
+        <p>
+          <textarea
+            name="body"
+            placeholder="body"
+            value={body}
+            onChange={(event) => {
+              setBody(event.target.value);
+            }}
+          ></textarea>
+        </p>
+        <p>
+          <input type="submit" value="Update"></input>
+        </p>
+      </form>
+    </article>
+  );
+}
+
 function App() {
-  const [mode, setMode] = useState(null);
+  const [mode, setMode] = useState("menu");
   const [id, setId] = useState(null);
   let content = null;
+  let updateTag = null;
 
   const [nextId, setNextId] = useState(4);
   const [foods, setFoods] = useState([
@@ -108,7 +154,7 @@ function App() {
 
   if (mode === "menu") {
     content = <Content title="hello" body=" this is menu!!" />;
-  } else if (mode === "link") {
+  } else if (mode === "READ") {
     let title,
       body = null;
     for (let i = 0; i < foods.length; i++) {
@@ -118,6 +164,19 @@ function App() {
       }
     }
     content = <Content title={title} body={body} />;
+    updateTag = (
+      <li>
+        <a
+          href="/update"
+          onClick={(event) => {
+            event.preventDefault();
+            setMode("UPDATE");
+          }}
+        >
+          update
+        </a>
+      </li>
+    );
   } else if (mode === "CREATE") {
     content = (
       <Create
@@ -126,14 +185,41 @@ function App() {
           const newFoods = [...foods];
           newFoods.push(newFood);
           setFoods(newFoods); // 여기서 setFoods(newFood) 해서 계속 작동 안되던 것이였음 ㅠㅠ
-          setMode("link");
+          setMode("READ");
           setId(nextId);
           setNextId(nextId + 1);
         }}
       ></Create>
     );
-  }
+  } else if (mode === "UPDATE") {
+    let title,
+      body = null;
+    for (let i = 0; i < foods.length; i++) {
+      if (foods[i].id === id) {
+        title = foods[i].title;
+        body = foods[i].body;
+      }
+    }
 
+    content = (
+      <Update
+        title={title}
+        body={body}
+        onUpdate={(title, body) => {
+          const updatedFood = { id: id, title: title, body: body };
+          const newFoods = [...foods];
+
+          for (let i = 0; i < newFoods.length; i++) {
+            if (newFoods[i].id === id) {
+              newFoods[i] = updatedFood;
+            }
+          }
+          setFoods(newFoods);
+          setMode("READ");
+        }}
+      ></Update>
+    );
+  }
   return (
     <div>
       <Menu
@@ -144,20 +230,27 @@ function App() {
       <Links
         foods={foods}
         onChangeMode={(_id) => {
-          setMode("link");
+          setMode("READ");
           setId(_id);
         }}
       ></Links>
       {content}
-      <a
-        href="/create"
-        onClick={(event) => {
-          event.preventDefault();
-          setMode("CREATE");
-        }}
-      >
-        Create
-      </a>
+
+      <ul>
+        <li>
+          <a
+            href="/create"
+            onClick={(event) => {
+              event.preventDefault();
+              setMode("CREATE");
+            }}
+          >
+            Create
+          </a>
+        </li>
+
+        {updateTag}
+      </ul>
     </div>
   );
 }
