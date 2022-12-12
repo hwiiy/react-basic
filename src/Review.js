@@ -122,10 +122,10 @@ function App() {
     content = (
       <Create
         onCreate={(_title, _body) => {
-          const newTopic = { id: nextId, title: _title, body: _body };
-          const newTopics = [...foods];
-          newTopics.push(newTopic);
-          setFoods(newTopics);
+          const newFood = { id: nextId, title: _title, body: _body };
+          const newFoods = [...foods];
+          newFoods.push(newFood);
+          setFoods(newFoods); // 여기서 setFoods(newFood) 해서 계속 작동 안되던 것이였음 ㅠㅠ
           setMode("link");
           setId(nextId);
           setNextId(nextId + 1);
